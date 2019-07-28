@@ -20,14 +20,9 @@ func main() {
 	}
 	defer database.Close()
 
-	row, err := database.Query("SELECT hitdie FROM class WHERE name = '" + class + "' COLLATE NOCASE")
-	if err != nil {
-		panic(err)
-	}
+	row := database.QueryRow("SELECT hitdie FROM class WHERE name = '" + class + "' COLLATE NOCASE")
 	var hitdie string
-	for row.Next() {
-		row.Scan(&hitdie)
-	}
+	row.Scan(&hitdie)
 
 	hitPoints := diceroller.MaxRoll(fmt.Sprintf("%d%s", 1, hitdie))
 	if level > 1 {
