@@ -1,0 +1,1 @@
+# go-character-generator
