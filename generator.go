@@ -2,17 +2,31 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
-	"os"
-	"strconv"
 
 	"github.com/Duke9289/go-dnd-dice/diceroller"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	class := os.Args[1]
-	level, _ := strconv.Atoi(os.Args[2])
+
+	var class string
+	var level int
+	const (
+		classDefault = "barbarian"
+		classUsage   = "The Character's class"
+		levelDefault = 1
+		levelUsage   = "The character's level"
+	)
+
+	flag.StringVar(&class, "class", classDefault, classUsage)
+	flag.StringVar(&class, "c", classDefault, classUsage)
+
+	flag.IntVar(&level, "level", levelDefault, levelUsage)
+	flag.IntVar(&level, "l", levelDefault, levelUsage)
+
+	flag.Parse()
 
 	database, err := sql.Open("sqlite3", "./stats.db")
 	if err != nil {
