@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"reflect"
 
 	"github.com/Duke9289/go-dnd-dice/diceroller"
+	"github.com/Duke9289/go-dnd-dice/statrolls"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -72,12 +74,23 @@ func main() {
 		hitPoints = hitPoints + levelPoints
 	}
 
-	generatedCharacter := &Character{
+	stats := statrolls.ThreeDSix()
+
+	generatedCharacter := Character{
 		Class:     class,
 		Level:     level,
 		HitPoints: hitPoints,
 	}
 
+	classFields := reflect.ValueOf(&generatedCharacter)
+
+	fields := classFields.Elem()
+	fields.FieldByName("Str").SetInt(int64(stats[0]))
+	fields.FieldByName("Con").SetInt(int64(stats[1]))
+	fields.FieldByName("Dex").SetInt(int64(stats[2]))
+	fields.FieldByName("Int").SetInt(int64(stats[3]))
+	fields.FieldByName("Wis").SetInt(int64(stats[4]))
+	fields.FieldByName("Cha").SetInt(int64(stats[5]))
 	generatedCharacter.print()
 
 }
