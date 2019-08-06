@@ -5,6 +5,8 @@ import (
 	"flag"
 	"fmt"
 	"reflect"
+	"sort"
+	"strings"
 
 	"github.com/Duke9289/go-dnd-dice/diceroller"
 	"github.com/Duke9289/go-dnd-dice/statrolls"
@@ -68,6 +70,8 @@ func main() {
 	var preferredAttr string
 	row.Scan(&class, &hitdie, &preferredAttr)
 
+	preferredAttrSplit := strings.Split(preferredAttr, ",")
+
 	hitPoints := diceroller.MaxRoll(fmt.Sprintf("%d%s", 1, hitdie))
 	if level > 1 {
 		levelPoints, _ := diceroller.ParseInputString(fmt.Sprintf("%d%s", level-1, hitdie))
@@ -75,6 +79,7 @@ func main() {
 	}
 
 	stats := statrolls.ThreeDSix()
+	sort.Sort(sort.Reverse(sort.IntSlice(stats)))
 
 	generatedCharacter := Character{
 		Class:     class,
@@ -85,12 +90,13 @@ func main() {
 	classFields := reflect.ValueOf(&generatedCharacter)
 
 	fields := classFields.Elem()
-	fields.FieldByName("Str").SetInt(int64(stats[0]))
-	fields.FieldByName("Con").SetInt(int64(stats[1]))
-	fields.FieldByName("Dex").SetInt(int64(stats[2]))
-	fields.FieldByName("Int").SetInt(int64(stats[3]))
-	fields.FieldByName("Wis").SetInt(int64(stats[4]))
-	fields.FieldByName("Cha").SetInt(int64(stats[5]))
+	fields.FieldByName(string(preferredAttrSplit[0])).SetInt(int64(stats[0]))
+	fields.FieldByName(string(preferredAttrSplit[1])).SetInt(int64(stats[1]))
+	fields.FieldByName(string(preferredAttrSplit[2])).SetInt(int64(stats[2]))
+	fields.FieldByName(string(preferredAttrSplit[3])).SetInt(int64(stats[3]))
+	fields.FieldByName(string(preferredAttrSplit[4])).SetInt(int64(stats[4]))
+	fields.FieldByName(string(preferredAttrSplit[5])).SetInt(int64(stats[5]))
+
 	generatedCharacter.print()
 
 }
