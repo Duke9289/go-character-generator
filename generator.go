@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 
 	"github.com/Duke9289/go-character-generator/character"
 	"github.com/Duke9289/go-character-generator/db"
@@ -16,10 +15,13 @@ func main() {
 		classUsage   = "The Character's class"
 		levelDefault = 1
 		levelUsage   = "The character's level"
+		raceDefault  = "random"
+		raceUsage    = "The character's race"
 	)
 
 	var class string
 	var level int
+	var race string
 
 	flag.StringVar(&class, "class", classDefault, classUsage)
 	flag.StringVar(&class, "c", classDefault, classUsage)
@@ -27,17 +29,21 @@ func main() {
 	flag.IntVar(&level, "level", levelDefault, levelUsage)
 	flag.IntVar(&level, "l", levelDefault, levelUsage)
 
+	flag.StringVar(&race, "race", raceDefault, raceUsage)
+	flag.StringVar(&race, "r", raceDefault, raceUsage)
+
 	flag.Parse()
 
 	class, hitDie, preferredAttr := db.GetClass(class)
 
+	race = db.GetRace(race)
+
 	generatedCharacter := character.Character{
 		Class: class,
 		Level: level,
+		Race:  race,
 	}
 
-	fmt.Println(class)
-	fmt.Println(preferredAttr)
 	generatedCharacter.RollStats(preferredAttr)
 
 	generatedCharacter.RollHitpoints(hitDie, level)

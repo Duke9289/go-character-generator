@@ -11,7 +11,7 @@ import (
 )
 
 type Character struct {
-	//Race  string
+	Race      string
 	Class     string
 	Level     int
 	HitPoints int
@@ -24,6 +24,7 @@ type Character struct {
 }
 
 func (c *Character) Print() {
+	fmt.Printf("Race: %s\n", c.Race)
 	fmt.Printf("Class: %s\n", c.Class)
 	fmt.Printf("Level: %d\n", c.Level)
 	fmt.Printf("Hit Points: %d\n", c.HitPoints)

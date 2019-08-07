@@ -22,3 +22,21 @@ func GetClass(class string) (dbClass string, hitdie string, preferredAttr string
 	row.Scan(&dbClass, &hitdie, &preferredAttr)
 	return
 }
+
+func GetRace(race string) (name string) {
+
+	database, err := sql.Open("sqlite3", "db/chargen.db")
+	if err != nil {
+		panic(err)
+	}
+	defer database.Close()
+
+	var row *sql.Row
+	if race != "random" {
+		row = database.QueryRow("SELECT name FROM races WHERE name = '" + race + "' COLLATE NOCASE")
+	} else {
+		row = database.QueryRow("SELECT name FROM races ORDER BY RANDOM() LIMIT 1")
+	}
+	row.Scan(&name)
+	return
+}
