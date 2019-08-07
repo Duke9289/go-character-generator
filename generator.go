@@ -2,11 +2,20 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"os"
 
 	"github.com/Duke9289/go-character-generator/character"
 	"github.com/Duke9289/go-character-generator/db"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+func checkErr(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
+}
 
 func main() {
 
@@ -36,7 +45,8 @@ func main() {
 
 	class, hitDie, preferredAttr := db.GetClass(class)
 
-	race = db.GetRace(race)
+	race, err := db.GetRace(race)
+	checkErr(err)
 
 	generatedCharacter := character.Character{
 		Class: class,

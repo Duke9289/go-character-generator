@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -23,7 +24,7 @@ func GetClass(class string) (dbClass string, hitdie string, preferredAttr string
 	return
 }
 
-func GetRace(race string) (name string) {
+func GetRace(race string) (string, error) {
 
 	database, err := sql.Open("sqlite3", "db/chargen.db")
 	if err != nil {
@@ -37,6 +38,14 @@ func GetRace(race string) (name string) {
 	} else {
 		row = database.QueryRow("SELECT name FROM races ORDER BY RANDOM() LIMIT 1")
 	}
-	row.Scan(&name)
-	return
+	var name string
+	switch err := row.Scan(&name); err {
+	case sql.ErrNoRows:
+		return name, errors.New("Class entered is not valid")
+	case nil:
+		return name, nil
+	default:
+		panic(err)
+	}
+
 }
